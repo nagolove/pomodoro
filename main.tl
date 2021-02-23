@@ -1,5 +1,6 @@
 --[[
 little pomodoro timer script to go off on a configurable interval
+based on https://gist.github.com/1bardesign/fac82485d67b8d97f6a38a68f685b5be#file-main-lua-L31
 ]]
 require 'love'
 
