@@ -30,27 +30,36 @@ local freq = note < 1 and freq_a or freq_b
 local a = math.sin(t * freq * math.pi * 2)
 local b = (a * a) * 2 - 1
 local v = a * b * note_vol
+local selectedBorder = false
 
 beep:setSample(i - 1, 1, v)
 end
 beep = love.audio.newSource(beep)
 
 function love.update(dt)
-t = t - dt
-if t <= 0 then
-    --beep
-    beep:seek(0)
-    beep:play()
-    --next interval
-    i = i + 1
-    if i > #intervals then
-        i = 1
+    t = t - dt
+    if t <= 0 then
+        --beep
+        beep:seek(0)
+        beep:play()
+        --next interval
+        i = i + 1
+        if i > #intervals then
+            i = 1
+        end
+        local cfg = intervals[i]
+        label = cfg[1]
+        limit = cfg[2] * 60
+        t = limit
     end
-    local cfg = intervals[i]
-    label = cfg[1]
-    limit = cfg[2] * 60
-    t = limit
-end
+    local mx, my = love.mouse.getPosition()
+    local w, h = love.graphics.getDimensions()
+    --print(mx, my, )
+    if mx > 0 and my > 0 and mx < w and my < h then
+        selectedBorder = true
+    else
+        selectedBorder = false
+    end
 end
 
 local mode = "grey"
@@ -63,6 +72,11 @@ function love.draw()
         love.graphics.setColor(0., 1., 0., 1.)
     end
     love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth() * t / limit, love.graphics.getHeight())
+
+    print("selectedBorder", selectedBorder )
+    --love.graphics.setColor(.0, .0, .0, 1.0)
+    --love.graphics.rectangle("line", 0, 0, love.graphics.getWidth() * t / limit, love.graphics.getHeight())
+
     love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
     love.graphics.printf(
     label,
@@ -92,4 +106,8 @@ function love.keypressed(k)
             love.event.quit("restart")
         end
     end
+end
+
+function love.mousemoved(x, y, dx, dy)
+    print("m", dx, dy)
 end
